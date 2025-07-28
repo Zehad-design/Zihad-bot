@@ -1,50 +1,58 @@
-module.exports.config = {
-	name: "inf",
-	version: "1.0.1", 
-	hasPermssion: 0,
-	credits: "Arun Kumar", //don't change the credits please
-	description: "Admin and Bot info.",
-	commandCategory: "info",
-	cooldowns: 1,
-	dependencies: 
-	{
-    "request":"",
-    "fs-extra":"",
-    "axios":""
+const axios = require("axios");
+const request = require("request");
+const fs = require("fs-extra");
+const moment = require("moment-timezone");
+
+module.exports = {
+  config: {
+    name: "inf",
+    version: "1.0.1",
+    author: "Arun Kumar", // do not remove credits please
+    countDown: 5,
+    role: 0,
+    shortDescription: "Bot and admin info",
+    longDescription: "Display bot name, prefix, uptime, and owner info.",
+    category: "info",
+    guide: {
+      en: "{pn}"
+    }
+  },
+
+  onStart: async function ({ message, event, api }) {
+    const time = process.uptime();
+    const hours = Math.floor(time / (60 * 60));
+    const minutes = Math.floor((time % (60 * 60)) / 60);
+    const seconds = Math.floor(time % 60);
+    const juswa = moment.tz("Asia/Dhaka").format("『D/MM/YYYY』 【HH:mm:ss】");
+
+    const links = [
+      "https://postimg.cc/jwtwJwdn",
+      "https://postimg.cc/34mk6ryF"
+    ];
+
+    const path = __dirname + "/cache/juswa.jpg";
+
+    const callback = () => {
+      message.reply({
+        body: `🌹 ADMIN AND BOT INFORMATION 🌺😇
+
+☄️ BOT NAME ☄️ ⚔ ${global.config.BOTNAME} ⚔
+
+🔥 OWNER 🔥: 𝐌𝐝 𝐓𝐚𝐦𝐢𝐦 
+🔥 OWNER 2 🔥:𝐒 𝐳𝐢𝐡𝐚𝐝
+
+📌 BOT PREFIX: ${global.config.PREFIX}
+
+🕒 Date & Time: ${juswa}
+⏱️ Uptime: ${hours}h ${minutes}m ${seconds}s
+
+✅ Thanks for using ${global.config.BOTNAME} 🖤`,
+        attachment: fs.createReadStream(path)
+      }, () => fs.unlinkSync(path));
+    };
+
+    request(encodeURI(links[Math.floor(Math.random() * links.length)]))
+      .pipe(fs.createWriteStream(path))
+      .on("close", () => callback());
   }
 };
-module.exports.run = async function({ api,event,args,client,Users,Threads,__GLOBAL,Currencies }) {
-const axios = global.nodemodule["axios"];
-const request = global.nodemodule["request"];
-const fs = global.nodemodule["fs-extra"];
-const time = process.uptime(),
-		hours = Math.floor(time / (60 * 60)),
-		minutes = Math.floor((time % (60 * 60)) / 60),
-		seconds = Math.floor(time % 60);
-const moment = require("moment-timezone");
-var juswa = moment.tz("Asia/Dhaka").format("『D/MM/YYYY』 【HH:mm:ss】");
-var link =                                     
-["https://postimg.cc/jwtwJwdn", "https://postimg.cc/34mk6ryF"];
-var callback = () => api.sendMessage({body:`🌹𝙰𝙳𝙼𝙸𝙽 𝙰𝙽𝙳 𝙱𝙾𝚃 𝙸𝙽𝙵𝙾𝚁𝙼𝙰𝚃𝙸𝙾𝙽 🌺😇
-
-
-☄️𝗕𝗢𝗧 𝗡𝗔𝗠𝗘☄️ ⚔ ${global.config.BOTNAME} ⚔
-
-🔥𝗢𝗪𝗡𝗘𝗥 🔥☞︎︎︎ 𝐒 𝐙𝐢𝐡𝐚𝐝 𝐚𝐧𝐝 𝐓𝐚𝐦𝐢𝐦 ☜︎︎︎✰ \n\n
-🙈🄾🅆🄽🄴🅁 🄲🄾🄽🅃🄰🄲🅃 🄻🄸🄽🄺🅂🙈➪ \n\n  𝗙𝗔𝗖𝗘𝗕𝗢𝗢𝗞 🧨𝕡𝕣𝕚𝕧𝕒𝕥𝕖💞🕊️
-  \n 
-✅𝗜𝗡𝗦𝗧𝗔𝗚𝗥𝗔𝗠 𝗨𝗦𝗘𝗥𝗡𝗔𝗠𝗘👉 𝕡𝕣𝕚𝕧𝕒𝕥𝕖 \n\n  ====
-
-🌸𝗕𝗼𝘁 𝗣𝗿𝗲𝗳𝗶𝘅🌸☞︎︎︎☜︎︎︎✰ ${global.config.PREFIX}
-
-🥳UPTIME🥳
-
-🌪️Today is🌪️ ☞︎︎︎☜︎︎︎✰ ${juswa} 
-
-⚡Bot is running⚡ ${hours}:${minutes}:${seconds}.
-
-✅Thanks for using My Bot ❤ ${global.config.BOTNAME} 🖤
-
-`,attachment: fs.createReadStream(__dirname + "/cache/juswa.jpg")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/juswa.jpg")); 
-      return request(encodeURI(link[Math.floor(Math.random() * link.length)])).pipe(fs.createWriteStream(__dirname + "/cache/juswa.jpg")).on("close",() => callback());
-   };
